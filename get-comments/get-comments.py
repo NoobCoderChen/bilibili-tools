@@ -69,9 +69,10 @@ def save_comments(Bvid):
                         else:
                             break
                     except Exception as err:
-                        print("Error")
+                        print("trrError")
                         print(trrurl)
                         print(err)
+                        input("press any key to exit")
                         sys.exit()
 
         for page in range(1, MAX_PAGE):   # just give a large number
@@ -95,19 +96,22 @@ def save_comments(Bvid):
                                 else:
                                     break
                             except Exception as err:
-                                print("No reply")
+                                print("rrError")
                                 print(rrurl)
                                 print(err)
+                                input("press any key to exit")
                                 sys.exit()
                 else:
                     break
             except Exception as err:
-                print("Error")
+                print("rError")
                 print(rurl) 
                 print(err)
+                input("press any key to exit")
                 sys.exit()
             time.sleep(5)
         
 if __name__ == '__main__':
-    Bvid="BV1zr4y1i7Gf"
+    Bvid=input("input BV: ")
     save_comments(Bvid)
+    input("press any key to exit")
