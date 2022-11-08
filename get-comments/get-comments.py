@@ -6,6 +6,33 @@ import csv
 import sys
 
 MAX_PAGE=100000
+def get_proxy():
+    return requests.get("http://127.0.0.1:5010/get/").json()
+
+def delete_proxy(proxy):
+    requests.get("http://127.0.0.1:5010/delete/?proxy={}".format(proxy))
+
+def getHtml(url):
+    # ....
+    retry_count = 5
+    while retry_count > 0:
+        try:
+            proxy = get_proxy().get("proxy")
+            # 使用代理访问
+            html = requests.get(url, proxies={"http": "http://{}".format(proxy)},headers=header,timeout=1)
+            if html.status_code >= 200:
+                if html.status_code <= 299:
+                    return html
+                else:
+                    raise Exception()
+            else:
+                raise Exception()
+        except Exception:
+            retry_count -= 1
+            time.sleep(1)
+            # 删除代理池中代理
+            delete_proxy(proxy)
+    return None
 
 #header={'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
 #        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36',
@@ -24,8 +51,15 @@ def get_time(ctime):
     return str(otherStyleTime)
 
 def get_oid(bvid):
-    video_url = 'https://www.bilibili.com/video/' + bvid
-    page = requests.get(video_url, headers=header).text
+    video_url = 'http://www.bilibili.com/video/' + bvid
+    try:
+        page = getHtml(video_url).text
+        if page == None:
+            raise Exception()
+    except Exception:
+            print("proxies retry out")
+            print(video_url)
+            sys.exit()
     aid = re.search(r'"aid":[0-9]+', page).group()[6:]
     return aid
 
@@ -53,7 +87,11 @@ def save_comments(Bvid):
         #     print(err)
         #     sys.exit()
         trurl=top_reply_url.format(oid)
-        trhtml = requests.get(trurl, headers=header)
+        trhtml = getHtml(trurl)
+        if trhtml == None:
+            print("proxies retry out")
+            print(trurl)
+            sys.exit()
         trdata = trhtml.json()
         if trdata['data']['top_replies']:
             for tri in trdata['data']['top_replies']:
@@ -61,7 +99,11 @@ def save_comments(Bvid):
                 for trrpage in range(1, MAX_PAGE):
                     trrurl=replies_reply_url.format(trrpage,oid,tri['rpid'])
                     try:
-                        trrhtml = requests.get(trrurl, headers=header)
+                        trrhtml = getHtml(trrurl)
+                        if trrhtml == None:
+                            print("proxies retry out")
+                            print(trrurl)
+                            sys.exit()
                         trrdata = trrhtml.json()
                         if trrdata['data']['replies']:
                             for trrx in trrdata['data']['replies']:
@@ -72,14 +114,20 @@ def save_comments(Bvid):
                         print("trrError")
                         print(trrurl)
                         print(err)
+                        print(trrdata['message'])
                         input("press any key to exit")
                         sys.exit()
+                    time.sleep(5)
 
         for page in range(1, MAX_PAGE):   # just give a large number
             rurl = reply_url.format(page, oid)
             print(rurl)
             try:
-                rhtml = requests.get(rurl, headers=header)
+                rhtml = getHtml(rurl)
+                if rhtml == None:
+                    print("proxies retry out")
+                    print(rurl)
+                    sys.exit()
                 rdata = rhtml.json()
                 if rdata['data']['replies']:
                     for i in rdata['data']['replies']:
@@ -88,7 +136,11 @@ def save_comments(Bvid):
                             rrurl=replies_reply_url.format(rrpage,oid,i['rpid'])
                             #print(url)
                             try:
-                                rrhtml = requests.get(rrurl,headers=header)
+                                rrhtml = getHtml(rrurl)
+                                if rrhtml == None:
+                                    print("proxies retry out")
+                                    print(rrurl)
+                                    sys.exit()
                                 rrdata = rrhtml.json()
                                 if rrdata['data']['replies']:
                                     for x in rrdata['data']['replies']:
@@ -99,14 +151,17 @@ def save_comments(Bvid):
                                 print("rrError")
                                 print(rrurl)
                                 print(err)
+                                print(rrdata['message'])
                                 input("press any key to exit")
                                 sys.exit()
+                            time.sleep(5)
                 else:
                     break
             except Exception as err:
                 print("rError")
                 print(rurl) 
                 print(err)
+                print(rdata['message'])
                 input("press any key to exit")
                 sys.exit()
             time.sleep(5)
