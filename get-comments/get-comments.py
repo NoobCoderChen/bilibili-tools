@@ -32,7 +32,7 @@ def get_oid(bvid):
 
 
 def save_comments(Bvid):
-    fname = Bvid + '_评论.csv'
+    fname = Bvid + '_comments.csv'
     oid = get_oid(Bvid)
     with open(fname, 'w+', newline='', encoding='utf_8_sig') as f:
         csv_writer=csv.writer(f)
@@ -74,7 +74,7 @@ def save_comments(Bvid):
                         print(err)
                         sys.exit()
 
-        for page in range(1, MAX_PAGE):   # 页码这里就简单处理了
+        for page in range(1, MAX_PAGE):   # just give a large number
             rurl = reply_url.format(page, oid)
             print(rurl)
             try:
