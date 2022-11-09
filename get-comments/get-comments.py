@@ -3,6 +3,7 @@ import requests
 import re
 import time
 import csv
+import os
 import sys
 
 MAX_PAGE=100000
@@ -19,7 +20,7 @@ def getHtml(url):
         try:
             proxy = get_proxy().get("proxy")
             # 使用代理访问
-            html = requests.get(url, proxies={"http": "http://{}".format(proxy)},headers=header,timeout=1)
+            html = requests.get(url, proxies={"https": "http://{}".format(proxy)},headers=header,timeout=1)
             if html.status_code >= 200:
                 if html.status_code <= 299:
                     return html
@@ -51,7 +52,7 @@ def get_time(ctime):
     return str(otherStyleTime)
 
 def get_oid(bvid):
-    video_url = 'http://www.bilibili.com/video/' + bvid
+    video_url = 'https://www.bilibili.com/video/' + bvid
     try:
         page = getHtml(video_url).text
         if page == None:
@@ -167,6 +168,14 @@ def save_comments(Bvid):
             time.sleep(5)
         
 if __name__ == '__main__':
-    Bvid=input("input BV: ")
-    save_comments(Bvid)
+    list=input("input file path: ")
+    if os.access(list, os.R_OK):
+        with open(list,'r',encoding='utf-8') as l:
+            while True:
+                Bvid=l.readline()
+                if not Bvid:
+                    print("EOF")
+                    break
+                save_comments(Bvid)
+
     input("press any key to exit")
