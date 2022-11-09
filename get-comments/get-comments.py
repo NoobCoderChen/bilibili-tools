@@ -20,7 +20,8 @@ def getHtml(url):
         try:
             proxy = get_proxy().get("proxy")
             # 使用代理访问
-            html = requests.get(url, proxies={"https": "http://{}".format(proxy)},headers=header,timeout=1)
+            #html = requests.get(url, proxies={"https": "http://{}".format(proxy)},headers=header,timeout=1)
+            html = requests.get(url,headers=header,timeout=5)
             if html.status_code >= 200:
                 if html.status_code <= 299:
                     return html
@@ -172,10 +173,18 @@ if __name__ == '__main__':
     if os.access(list, os.R_OK):
         with open(list,'r',encoding='utf-8') as l:
             while True:
-                Bvid=l.readline()
+                Bvid=l.readline().strip('\n')
                 if not Bvid:
                     print("EOF")
+                    input("press any key")
                     break
                 save_comments(Bvid)
-
-    input("press any key to exit")
+    else:
+        while True:
+            try:
+                Bvid = re.match(r"BV(.){10}", list).group()
+            except Exception:
+                print("illegal input")
+                sys.exit()
+            save_comments(Bvid)
+            input("press any key")
