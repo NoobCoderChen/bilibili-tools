@@ -92,6 +92,7 @@ def save_comments(Bvid):
         trhtml = getHtml(trurl)
         if trhtml == None:
             print("proxies retry out")
+            print(Bvid)
             print(trurl)
             sys.exit()
         trdata = trhtml.json()
@@ -104,6 +105,7 @@ def save_comments(Bvid):
                         trrhtml = getHtml(trrurl)
                         if trrhtml == None:
                             print("proxies retry out")
+                            print(Bvid)
                             print(trrurl)
                             sys.exit()
                         trrdata = trrhtml.json()
@@ -114,6 +116,7 @@ def save_comments(Bvid):
                             break
                     except Exception as err:
                         print("trrError")
+                        print(Bvid)
                         print(trrurl)
                         print(err)
                         print(trrdata['message'])
@@ -128,6 +131,7 @@ def save_comments(Bvid):
                 rhtml = getHtml(rurl)
                 if rhtml == None:
                     print("proxies retry out")
+                    print(Bvid)
                     print(rurl)
                     sys.exit()
                 rdata = rhtml.json()
@@ -141,6 +145,7 @@ def save_comments(Bvid):
                                 rrhtml = getHtml(rrurl)
                                 if rrhtml == None:
                                     print("proxies retry out")
+                                    print(Bvid)
                                     print(rrurl)
                                     sys.exit()
                                 rrdata = rrhtml.json()
@@ -151,6 +156,7 @@ def save_comments(Bvid):
                                     break
                             except Exception as err:
                                 print("rrError")
+                                print(Bvid)
                                 print(rrurl)
                                 print(err)
                                 print(rrdata['message'])
@@ -161,6 +167,7 @@ def save_comments(Bvid):
                     break
             except Exception as err:
                 print("rError")
+                print(Bvid)
                 print(rurl) 
                 print(err)
                 print(rdata['message'])
