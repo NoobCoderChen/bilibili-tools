@@ -19,7 +19,7 @@ def getHtml(url):
     while retry_count > 0:
         try:
             proxy = get_proxy().get("proxy")
-            # 使用代理访问
+            # use proxy
             #html = requests.get(url, proxies={"https": "http://{}".format(proxy)},headers=header,timeout=1)
             html = requests.get(url,headers=header,timeout=5)
             if html.status_code >= 200:
@@ -32,15 +32,18 @@ def getHtml(url):
         except Exception:
             retry_count -= 1
             time.sleep(1)
-            # 删除代理池中代理
+            # delete unavailable proxy
             delete_proxy(proxy)
     return None
 
 #header={'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
 #        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36',
 #        }
-header={'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36',
+#header={'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+#        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36',
+#        }
+header={'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0',
         }
 
 top_reply_url='https://api.bilibili.com/x/v2/reply/main?jsonp=jsonp&type=1&oid={}&mode=3'
